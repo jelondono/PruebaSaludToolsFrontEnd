@@ -1,0 +1,339 @@
+<div class="contenedor-tabla">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-9">
+        <h4>Listado de tipos de citas medicas</h4>
+      </div>
+      <div class="col-3">
+        <button
+          class="btn btn-outline-success btn-sm"
+          data-title="Save"
+          data-toggle="modal"
+          data-target="#add"
+          (click)="openModalAgregarTipoCita(agregarTipoCitaMedica)"
+        >
+          <span class="fa fa-plus"></span> Agregar tipo de cita medica
+        </button>
+      </div>
+    </div>
+    <br /><br />
+    <div class="row">
+      <div class="form-group has-search col-sm-7 col-md-4">
+        <span class="fa fa-search form-control-feedback"></span>
+        <input
+          type="text"
+          [(ngModel)]="filtroTipoCitas"
+          name="filtroTramiesPendientes"
+          (keyup)="filtrarTipoCitas($event)"
+          class="form-control"
+          placeholder="Buscar"
+        />
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table id="mytable" class="table table-bordered table-responsive">
+        <thead>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Color</th>
+          <th>Duración en minutos</th>
+          <th>¿Activa?</th>
+          <th>Fecha creación</th>
+          <th>Última fecha edición</th>
+          <th>Editar</th>
+          <th>Eliminar</th>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let item of listadoTipoCitasModel
+                | paginate: { itemsPerPage: 10, currentPage: p };
+              let posicion = index
+            "
+          >
+            <th scope="row">{{ item.id }}</th>
+            <td>{{ item.nombre }}</td>
+            <td>{{ item.descripcion }}</td>
+            <td><input type="color" [value]="item.color" disabled /></td>
+            <td>{{ item.duracionMinutos | convertMinHours }}</td>
+            <td>{{ item.activo }}</td>
+            <td>{{ item.fecCreacion }}</td>
+            <td>{{ item.fecActualizacion }}</td>
+            <td>
+              <button
+                class="btn btn-outline-success btn-xs"
+                (click)="openModalEditarTipoCita(editarTipoCitaModal, item)"
+                data-title="Edit"
+                data-toggle="modal"
+                data-target="#edit"
+              >
+                <span class="fa fa-pencil"></span>Editar
+              </button>
+            </td>
+            <td>
+              <button
+                class="btn btn-outline-danger btn-xs"
+                data-title="Delete"
+                (click)="eliminarTipoCita(item.id)"
+                data-toggle="modal"
+                data-target="#delete"
+              >
+                <span class="fa fa-trash"></span>Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <pagination-controls
+        *ngIf="listadoTipoCitasModel"
+        (pageChange)="p = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        screenReaderPaginationLabel="Paginación"
+        screenReaderPageLabel="Pagina"
+        screenReaderCurrentLabel="Estas en la pagina"
+        responsive
+      ></pagination-controls>
+    </div>
+  </div>
+</div>
+<!-- Modal para guardar un nuevo tipo de cita -->
+<ng-template #agregarTipoCitaMedica let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Agregar tipo de cita</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="cerrarModal('guardar')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formTipoCita" (onSubmit)="addTipoCitaController('guardar')">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="numIdentifiacion">Nombre</label>
+          <input
+            type="text"
+            formControlName="nombre"
+            class="form-control"
+            name="nombre"
+            placeholder="Digite el nombre de la cita medica"
+          />
+          <span
+            class="text-warning"
+            *ngIf="
+              formTipoCita.controls['nombre'].hasError('required') &&
+              formTipoCita.controls['nombre'].touched
+            "
+          >
+            Ingrese un nombre para el tipo de cita
+          </span>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="descripcion">Descripción</label>
+          <textarea
+            name="descripcion"
+            class="form-control"
+            formControlName="descripcion"
+            placeholder="Digite una descripcion de el tipo de cita medica"
+          ></textarea>
+          <span
+            class="text-warning"
+            *ngIf="
+              formTipoCita.controls['descripcion'].hasError('required') &&
+              formTipoCita.controls['descripcion'].touched
+            "
+          >
+            Ingrese una descripcion breve
+          </span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="numIdentifiacion">Activo?</label>
+          <br />
+          <span class="switch">
+            <input
+              type="checkbox"
+              class="switch"
+              id="estado"
+              name="estado"
+              formControlName="activo"
+            />
+            <label for="estado"></label>
+          </span>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="apellido">Duración en minutos</label>
+          <ngx-slider
+            formControlName="duracionMinutos"
+            name="duracion"
+            [options]="options"
+          ></ngx-slider>
+          <span
+            class="text-warning"
+            *ngIf="
+              formTipoCita.controls['duracionMinutos'].hasError('required') &&
+              formTipoCita.controls['duracionMinutos'].touched
+            "
+          >
+            Ingrese la duración en minutos
+          </span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="nombre">Color</label>
+          <ngx-colors
+            ngx-colors-trigger
+            formControlName="color"
+            name="color"
+          ></ngx-colors>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="formTipoCita.invalid"
+          (click)="addTipoCitaController('guardar')"
+        >
+          Guardar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          (click)="cerrarModal('guardar')"
+        >
+          Cerrar
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!-- Fin modal -->
+<!-- Modal para editar tipo de cita existente-->
+<ng-template #editarTipoCitaModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Editar tipo de cita medica
+    </h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="cerrarModal('editar')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formTipoCita" (onSubmit)="addTipoCitaController('editar')">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="numIdentifiacion">Nombre</label>
+          <input
+            type="text"
+            formControlName="nombre"
+            class="form-control"
+            name="nombre"
+            placeholder="Digite el nombre de la cita medica"
+          />
+          <span
+            class="text-warning"
+            *ngIf="
+              formTipoCita.controls['nombre'].hasError('required') &&
+              formTipoCita.controls['nombre'].touched
+            "
+          >
+            Ingrese un nombre para el tipo de cita
+          </span>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="descripcion">Descripción</label>
+          <textarea
+            name="descripcion"
+            class="form-control"
+            formControlName="descripcion"
+            placeholder="Digite una descripcion de el tipo de cita medica"
+          ></textarea>
+          <span
+            class="text-warning"
+            *ngIf="
+              formTipoCita.controls['descripcion'].hasError('required') &&
+              formTipoCita.controls['descripcion'].touched
+            "
+          >
+            Ingrese una descripcion breve
+          </span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="numIdentifiacion">Activo?</label>
+          <br />
+          <span class="switch">
+            <input
+              type="checkbox"
+              class="switch"
+              id="estado"
+              name="estado"
+              formControlName="activo"
+            />
+            <label for="estado"></label>
+          </span>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="apellido">Duración en minutos</label>
+          <ngx-slider
+            formControlName="duracionMinutos"
+            name="duracion"
+            [options]="options"
+          ></ngx-slider>
+          <span
+            class="text-warning"
+            *ngIf="
+              formTipoCita.controls['duracionMinutos'].hasError('required') &&
+              formTipoCita.controls['duracionMinutos'].touched
+            "
+          >
+            Ingrese la duración en minutos
+          </span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="nombre">Color</label>
+          <ngx-colors
+            ngx-colors-trigger
+            formControlName="color"
+            name="color"
+          ></ngx-colors>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          (click)="addTipoCitaController('editar')"
+        >
+          Actualizar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          (click)="cerrarModal('editar')"
+        >
+          Cerrar
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!-- Fin modal -->
