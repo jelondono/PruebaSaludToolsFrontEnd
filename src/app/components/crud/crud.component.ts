@@ -131,7 +131,7 @@ export class CRUDComponent implements OnInit {
     if (!isNullOrUndefined(filtro) && filtro != '') {
       this.listadoTipoCitasModel = this.listadoTipoCitasModelTemp.filter(
         (itemTipoCitas) => {
-          /* Se convierten todos los parametros en mayusculas y strings */
+          /* Se convierten todos los parametros en minusculas y strings */
           let idArray: string = itemTipoCitas.id.toString().toLowerCase();
           let nombreArray: string = itemTipoCitas.nombre.toLowerCase();
           let descripcionArray: string =

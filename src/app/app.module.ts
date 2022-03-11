@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxColorsModule } from 'ngx-colors';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { ConvertMinHours } from './utilitys/pipes/numeros';
+import { ConvertirBoolean, ConvertMinHours } from './utilitys/pipes/numeros';
 import { TipoCitaService } from './services/tipo-cita.service';
 
 @NgModule({
@@ -24,6 +24,7 @@ import { TipoCitaService } from './services/tipo-cita.service';
     CRUDComponent,
     NavigationComponent,
     ConvertMinHours,
+    ConvertirBoolean,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +38,12 @@ import { TipoCitaService } from './services/tipo-cita.service';
     NgxSliderModule,
     BrowserAnimationsModule,
   ],
-  providers: [TipoCitaService, GeneralInterface, ConvertMinHours],
+  providers: [
+    TipoCitaService,
+    GeneralInterface,
+    ConvertMinHours,
+    ConvertirBoolean,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

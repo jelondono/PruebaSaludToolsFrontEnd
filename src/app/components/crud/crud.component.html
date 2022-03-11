@@ -57,7 +57,14 @@
             <td>{{ item.descripcion }}</td>
             <td><input type="color" [value]="item.color" disabled /></td>
             <td>{{ item.duracionMinutos | convertMinHours }}</td>
-            <td>{{ item.activo }}</td>
+            <td
+              [ngClass]="{
+                classActivo: item.activo === true,
+                classInactivo: item.activo === false
+              }"
+            >
+              {{ item.activo | estados }}
+            </td>
             <td>{{ item.fecCreacion }}</td>
             <td>{{ item.fecActualizacion }}</td>
             <td>
@@ -112,7 +119,10 @@
     </button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="formTipoCita" (onSubmit)="addTipoCitaController('guardar')">
+    <form
+      [formGroup]="formTipoCita"
+      (onSubmit)="addTipoCitaController('guardar')"
+    >
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="numIdentifiacion">Nombre</label>
@@ -233,7 +243,10 @@
     </button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="formTipoCita" (onSubmit)="addTipoCitaController('editar')">
+    <form
+      [formGroup]="formTipoCita"
+      (onSubmit)="addTipoCitaController('editar')"
+    >
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="numIdentifiacion">Nombre</label>
