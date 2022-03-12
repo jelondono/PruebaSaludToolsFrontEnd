@@ -22,5 +22,7 @@ Este es un cliente hecho con el framework Angular 9, y el back desarrollado en S
 * Para correr nuesto servidor descargamos las dependencias y ejecutamos el Jar en su editor o servidor a eleccion: 
     
 
+Registro:
+
 
 
